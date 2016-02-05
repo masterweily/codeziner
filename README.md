@@ -1,6 +1,6 @@
 <h2>Command Line Tools</h2>
 <h3>Generate</h3>
-<h4>TODO - klass <h4>
+<h4>TODO - klass<h4>
 ```bash
 codeziner generate klass namespace/of/klass
 ```
