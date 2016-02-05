@@ -1,17 +1,30 @@
-<b>Clone and start new project</b>
-</br>
-```git clone git@github.com:masterweily/rspec-guard-spork-boilerplate.git```
+<h2>Command Line Tools</h2>
+<h3>Generate</h3>
+<h4>TODO - klass <h4>
+```bash
+codeziner generate klass namespace/of/klass
+```
+<b>TODO - will generate code file</b>
+```ruby
+# namespace/of/klass.rb
+module Namespace
+  module Of
+    class Klass
+    end
+  end
+end
+```
 
-```mv rspec-guard-spork-boilerplate new_app_name```
+<b>TODO - And spec file</b>
+```ruby
+# sepc/namespace/of/klass_spec.rb
+require 'spec_helper'
+require 'namespace/of/klass'
 
-```cd new_app_name```
-
-```rm -rf .git```
-
-```git init```
-
-<b>start running</b>
-
-```bundle install```
-
-``` guard ```
+module Namespace
+  module Of
+    describe Klass do
+    end
+  end
+end
+```
