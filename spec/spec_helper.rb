@@ -1,5 +1,4 @@
 require 'spork'
-require './lib/appname'
 
 Spork.prefork do
   require 'rspec'

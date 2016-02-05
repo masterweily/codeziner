@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require 'codeziner'
+
+class String
+  def red;            "\e[31m#{self}\e[0m" end
+  def green;          "\e[32m#{self}\e[0m" end
+  def blue;           "\e[34m#{self}\e[0m" end
+  def bold;           "\e[1m#{self}\e[22m" end
+end
+
+class Generator
+
+  def self.klass(name)
+    puts "Generating klass #{name}".green.bold
+  end
+
+end
+
+if ARGV[0] == 'generate'
+  Generator.send *ARGV.slice(1..-1)
+else
+  puts 'Unknown Command'.red.bold
+end
