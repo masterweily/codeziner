@@ -4,7 +4,7 @@
 ```bash
 codeziner generate klass namespace/of/klass
 ```
-<b>TODO - will generate code file</b>
+TODO - will generate code file
 ```ruby
 # namespace/of/klass.rb
 module Namespace
@@ -15,7 +15,7 @@ module Namespace
 end
 ```
 
-<b>TODO - And spec file</b>
+TODO - And spec file
 ```ruby
 # sepc/namespace/of/klass_spec.rb
 require 'spec_helper'
