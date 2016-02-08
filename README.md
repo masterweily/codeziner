@@ -1,6 +1,6 @@
-<h2>Command Line Tools</h2>
-<h3>Generate</h3>
-<h4>class<h4>
+## Command Line Tools ##
+### Generate ###
+#### class ####
 ```bash
 codeziner generate class namespace/of/klass
 ```
@@ -28,7 +28,7 @@ module Namespace
 end
 ```
 
-<h4>module<h4>
+#### module ###
 ```bash
 codeziner generate module namespace/of/module
 ```
