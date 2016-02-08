@@ -1,24 +1,190 @@
 #!/usr/bin/env ruby
 
 require 'codeziner'
+require 'fileutils'
 
 class String
   def red;            "\e[31m#{self}\e[0m" end
   def green;          "\e[32m#{self}\e[0m" end
   def blue;           "\e[34m#{self}\e[0m" end
   def bold;           "\e[1m#{self}\e[22m" end
+
+  def classify
+    split("/").map { |x| x.split('_').collect!{ |w| w.capitalize }.join }.join("::")
+  end
+
+  def underscore
+    gsub(/::/, '/').
+    gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+    gsub(/([a-z\d])([A-Z])/,'\1_\2').
+    tr("-", "_").
+    downcase
+  end
 end
 
 class Generator
 
-  def self.klass(name)
-    puts "Generating klass #{name}".green.bold
+  def self.generate(entity_type, name)    
+    self.const_get(entity_type.to_s.classify).new(name).create
+    Spec.new(name).create
+  end
+
+  class Entity
+    def initialize(name, embed: [])
+      @name = name
+      @embed = embed
+    end
+
+    attr_reader :name, :embed
+
+    def create
+      create_dir
+      create_code
+      log_message
+    end
+
+
+    def code_content      
+      if dir_name_or_nil
+        code_content_with_wraper
+      else
+        code_content_without_wraper
+      end
+    end
+
+    private
+
+    def base_name
+      @base_name ||= File.basename(name)
+    end
+
+    def dir_name
+      @dir_name ||= File.dirname(name).gsub(/^\.$/,"")
+    end
+
+    def dir_name_or_nil
+      if dir_name.empty? then nil else dir_name end
+    end
+
+    def log_message
+      puts("Codeziner " + "create".green.bold + " #{content_type} #{keyword} #{full_entity_name.blue.bold} in #{code_file.bold}")
+    end
+
+    def content_type
+      "code"
+    end
+
+    def create_dir
+      FileUtils.mkdir_p(full_dir_path)
+    end
+
+    def create_code
+      File.write(code_file, code_content)
+    end
+
+    def code_file
+      "#{full_dir_path}/#{base_name}#{file_suffix}"
+    end
+
+    def file_suffix
+      ".rb"
+    end
+
+
+    def full_entity_name
+      name.classify
+    end
+
+    def full_dir_path
+      [
+        "lib",
+        dir_name_or_nil
+      ].compact.join("/")
+    end
+
+    def code_content_with_wraper
+      i = dir_name.split("/").count
+      Module.new(dir_name, embed: code_content_without_wraper_array).code_content
+    end
+
+    def code_content_without_wraper_array
+      [
+        "#{tabs}#{keyword} #{entity_name}#{header_suffix}",
+        embed,
+        "#{tabs}end"
+      ]
+    end
+
+    def header_suffix
+      ""
+    end
+
+    def tabs
+      "  "*tabs_count
+    end
+
+    def tabs_count
+      dir_name.split("/").count
+    end
+
+    def code_content_without_wraper
+      code_content_without_wraper_array.join("\n")
+    end    
+
+    def keyword
+      self.class.name.split('::').last.underscore
+    end
+
+    def entity_name
+      base_name.classify
+    end
+  end
+
+  class Spec < Entity
+
+    private
+
+    def content_type
+      "spec"
+    end
+    
+    def header_suffix
+      " do"
+    end
+
+    def keyword
+      :describe
+    end
+
+    def full_dir_path
+      "spec/#{super}"
+    end
+
+    def file_suffix
+      "_spec#{super}"
+    end
+
+    def code_content_with_wraper
+      [
+        "require 'spec_helper'",
+        "require '#{dir_name}/#{base_name}'",
+        super,
+      ].join("\n")
+    end
+
+
+  end
+
+  class Module < Entity    
+  end
+
+  class Class < Entity
   end
 
 end
 
 if ARGV[0] == 'generate'
-  Generator.send *ARGV.slice(1..-1)
+  Generator.send(*ARGV)
 else
-  puts 'Unknown Command'.red.bold
+  puts "Codeziner - unknown command: #{ARGV[0].to_s.bold}".red
 end

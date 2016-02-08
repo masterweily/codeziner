@@ -68,3 +68,6 @@ DEPENDENCIES
   rspec
   spork (~> 0.9)
   terminal-notifier-guard
+
+BUNDLED WITH
+   1.10.6
